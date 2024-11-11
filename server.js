@@ -1,57 +1,16 @@
 const express = require('express');
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const connectDB = require('./db/db');
-const User = require('./models/User');
 const authenticate = require('./middleware/authenticate');
+const routes = require('./routes/index')
 
 const app = express();
 
 app.use(express.json());
 
-app.post('/register',async (req,res,next)=>{
-  const {name,email,password} = req.body;
-  if(!name || !email || !password) {
-    return res.status(400).json({message:'Invalid data'});
-  }
-  let user = await User.findOne({email});
-  if(user){
-    return res.status(400).json({message:'user already exist'});
-  }
-  try {
-    user = new User({name,email,password});
-  const salt = await bcrypt.genSaltSync(10);
-  const hash = await bcrypt.hash(password, salt);
-  user.password = hash;
+app.use(routes);
 
-  await user.save();
-  return res.status(201).json({message:'user created successfully',user});
-  } catch (error) {
-    next(error);
-  }
-})
-
-app.post('/login',async(req,res,next)=>{
-  const {email,password} = req.body;
-  try {
-    const user = await User.findOne({email});
-    if(!user){
-      return res.status(400).json({message:'Invalid credentials'});
-    }
-    const isMatch = await bcrypt.compare(password,user.password);
-    if(!isMatch){
-      return res.status(400).json({message:'Invalid credentials'});
-    }
-    delete user._doc.password;
-    const token = jwt.sign(user._doc,'secret-key',{expiresIn:'2h'});
-    return res.status(200).json({message:'Login Successfull',token});
-  } catch (error) {
-    next(error);
-  }
-})
-
-app.get('/private',authenticate, async(req, res) => {
+app.get('/private',authenticate, async(_req, res) => {
   
   return res.status(200).json({ message: 'I am a private route' });
  
@@ -67,7 +26,9 @@ app.get('*',(_,res)=>{
 
 app.use((err, _req, res, _next) => {
   console.log(err);
-  res.status(500).json({ message: 'Server Error Occurred' });
+  const message = err.message ? err.message : 'server error occurred';
+  const status = err.status ? err.status : 500;
+  res.status(status).json({ message});
 });
 
 connectDB(process.env.MONGO_CONNECTION_STRING)
