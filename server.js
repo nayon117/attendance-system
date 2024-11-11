@@ -1,8 +1,10 @@
 const express = require('express');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const connectDB = require('./db/db');
 const User = require('./models/User');
+const authenticate = require('./middleware/authenticate');
 
 const app = express();
 
@@ -42,11 +44,18 @@ app.post('/login',async(req,res,next)=>{
       return res.status(400).json({message:'Invalid credentials'});
     }
     delete user._doc.password;
-    return res.status(200).json({message:'Login Successfull',user});
+    const token = jwt.sign(user._doc,'secret-key',{expiresIn:'2h'});
+    return res.status(200).json({message:'Login Successfull',token});
   } catch (error) {
     next(error);
   }
 })
+
+app.get('/private',authenticate, async(req, res) => {
+  
+  return res.status(200).json({ message: 'I am a private route' });
+ 
+});
 
 app.get('/', (_req, res) => {
   res.send('welcome to home');
