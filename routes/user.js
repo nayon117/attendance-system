@@ -9,6 +9,6 @@ router.delete('/:userId',()=>{});
 
 // find all data and create data
 router.get('/',userController.getUsers);
-router.post('/',()=>{});
+router.post('/',userController.postUser);
 
 module.exports= router;
