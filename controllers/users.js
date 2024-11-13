@@ -1,5 +1,6 @@
 const userService = require("../service/user");
 const authService = require("../service/auth");
+const error = require("../utils/error");
 
 const getUserById = async (req, res, next) => {
   const userId = req.params.userId;
@@ -15,7 +16,19 @@ const getUserById = async (req, res, next) => {
 };
 const putUserById = (req, res, next) => {};
 const patchUserById = (req, res, next) => {};
-const deleteUserById = (req, res, next) => {};
+const deleteUserById = async(req, res, next) => {
+  const {userId} = req.params;
+  try {
+    const user = await userService.findUserByProperty('_id',userId);
+    if(!user){
+      throw error('user not found',404);
+    }
+    await user.deleteOne(user._id);
+    res.status(203).send();
+  } catch (error) {
+    next(error)
+  }
+};
 
 const getUsers = async (_req, res, next) => {
   try {

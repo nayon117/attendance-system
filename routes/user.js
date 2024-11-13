@@ -5,7 +5,7 @@ const userController = require('../controllers/users');
 router.get('/:userId',userController.getUserById);
 router.put('/:userId',()=>{});
 router.patch('/:userId',()=>{});
-router.delete('/:userId',()=>{});
+router.delete('/:userId',userController.deleteUserById);
 
 // find all data and create data
 router.get('/',userController.getUsers);
