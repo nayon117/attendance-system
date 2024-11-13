@@ -15,7 +15,25 @@ const getUserById = async (req, res, next) => {
   }
 };
 const putUserById = (req, res, next) => {};
-const patchUserById = (req, res, next) => {};
+const patchUserById =async (req, res, next) => {
+  const {userId} = req.params;
+  const {name,roles,accountStatus} = req.body;
+  try {
+    const user = await userService.findUserByProperty('_id',userId);
+    if(!user){
+      throw error('user not found',404);
+    }
+    user.name = name ?? user.name;
+    user.roles = roles ?? user.roles;
+    user.accountStatus = accountStatus ?? user.accountStatus;
+    
+    await user.save();
+    return res.status(200).json(user);
+  } catch (error) {
+    
+  }
+};
+
 const deleteUserById = async(req, res, next) => {
   const {userId} = req.params;
   try {
