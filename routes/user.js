@@ -2,7 +2,7 @@ const router = require('express').Router();
 const userController = require('../controllers/users');
 
 // findone, update, delete via id
-router.get('/:userId',()=>{});
+router.get('/:userId',userController.getUserById);
 router.put('/:userId',()=>{});
 router.patch('/:userId',()=>{});
 router.delete('/:userId',()=>{});

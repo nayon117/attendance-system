@@ -20,9 +20,9 @@ app.get('/', (_req, res) => {
   res.send('welcome to home');
 });
 
-app.get('*',(_,res)=>{
-    res.send('Thank you for your request');
-})
+// app.get('*',(_,res)=>{
+//     res.send('Thank you for your request');
+// })
 
 app.use((err, _req, res, _next) => {
   console.log(err);
