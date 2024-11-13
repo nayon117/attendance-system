@@ -3,7 +3,7 @@ const userController = require('../controllers/users');
 
 // findone, update, delete via id
 router.get('/:userId',userController.getUserById);
-router.put('/:userId',()=>{});
+router.put('/:userId',userController.putUserById);
 router.patch('/:userId',userController.patchUserById);
 router.delete('/:userId',userController.deleteUserById);
 
